@@ -57,6 +57,18 @@ def create_png(number):
     return byte_io.getvalue()
 
 
+def create_gif(number):
+    img = prepare_number(number)
+
+    gif = Image.new("RGB", img.size, (255, 255, 255))
+    gif.paste(img, mask=img.split()[3])
+    gif = gif.resize((95,72))    
+
+    byte_io = BytesIO()    
+    gif.save(byte_io, 'GIF')   
+    return byte_io.getvalue()
+
+
 def create_pdf(number):
     img = prepare_number(number)
 
@@ -76,6 +88,13 @@ def png(number):
     return png
 
 
+@route('/gif/<number>')
+def gif(number):
+    gif = create_gif(number)
+    response.set_header('Content-Type', 'image/gif')
+    return gif
+
+
 @route('/pdf/<number>')
 def pdf(number):
     png = create_pdf(number)
@@ -92,6 +111,9 @@ def index():
     txt += '<button onclick="window.location='
     txt += "'/pdf/'+document.getElementsByName('num')[0].value;" 
     txt += '">PDF</button>'
+    txt += '<button onclick="window.location='
+    txt += "'/gif/'+document.getElementsByName('num')[0].value;" 
+    txt += '">GIF</button>'
     txt += '<br/><br/><hr/>Copyrights &copy; 2023 by <a href="https://github.com/dkxce">dkxce</a>, sources <a href="https://github.com/dkxce/MOTOHOMEP">here</a>'
     txt += '</body></html>'
     return txt
